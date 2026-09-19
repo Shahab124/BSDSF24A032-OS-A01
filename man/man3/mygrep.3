@@ -1,0 +1,21 @@
+.TH MYGREP 3 "September 2026" "libmyutils 0.4.1" "libmyutils Manual"
+.SH NAME
+mygrep \- find lines in a file that contain a string
+.SH SYNOPSIS
+#include "myfilefunctions.h"
+.PP
+.B int mygrep(FILE *fp, const char *search_str, char ***matches);
+.SH DESCRIPTION
+.B mygrep()
+reads
+.I fp
+line by line and saves a copy of every line that contains
+.IR search_str .
+The lines are returned in
+.I matches
+(at most 100 lines).
+The caller must free each line and then the array itself.
+.SH RETURN VALUE
+The number of matching lines, or \-1 on failure.
+.SH AUTHOR
+Shahab (BSDSF24A032) <shahabkazmi125@gmail.com>

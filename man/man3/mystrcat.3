@@ -1,0 +1,20 @@
+.TH MYSTRCAT 3 "September 2026" "libmyutils 0.4.1" "libmyutils Manual"
+.SH NAME
+mystrcat \- join two strings
+.SH SYNOPSIS
+#include "mystrfunctions.h"
+.PP
+.B int mystrcat(char *dest, const char *src);
+.SH DESCRIPTION
+.B mystrcat()
+adds the string
+.I src
+to the end of
+.IR dest .
+.I dest
+must be large enough to hold both strings.
+.SH RETURN VALUE
+The new length of
+.IR dest .
+.SH AUTHOR
+Shahab (BSDSF24A032) <shahabkazmi125@gmail.com>
