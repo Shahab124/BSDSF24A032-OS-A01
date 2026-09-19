@@ -1,0 +1,4 @@
+obj/*.o
+bin/client*
+lib/*.a
+lib/*.so
