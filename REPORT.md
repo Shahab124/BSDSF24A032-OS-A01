@@ -55,3 +55,40 @@ with the letter `T`, meaning their code is defined inside the executable.
 This shows that static linking copies the code of the needed functions from the
 library into the final program at build time. The program no longer needs
 `libmyutils.a` to run.
+
+## Feature 4: Dynamic Library
+
+### Q1. What is Position-Independent Code (-fPIC) and why is it needed for shared libraries?
+PIC is machine code that works correctly no matter which memory address it is loaded at.
+Instead of using fixed (absolute) addresses, it uses addresses relative to the current
+position.
+
+A shared library is loaded at a different address in each program that uses it, and
+one copy in memory is shared by many programs. So its code cannot depend on a fixed
+address. `-fPIC` tells gcc to generate such code. Without it, `gcc -shared` fails.
+
+### Q2. Explain the difference in file size between the static and dynamic clients.
+- `client_static`: 807K
+- `client_dynamic`: 17K
+
+`client_static` was linked with `-static`, so the code of our library AND the whole
+C library (printf, fopen, malloc...) was copied into the executable.
+
+`client_dynamic` contains only `main()` and a note saying which libraries it needs
+(`libmyutils.so`, `libc.so.6`). The actual code is loaded from those `.so` files at
+run time, so the file is much smaller. `nm` confirms this: in `client_dynamic`,
+`mystrlen` is `U` (undefined, comes from outside), while in `client_static` it is `T`
+(defined inside).
+
+### Q3. What is LD_LIBRARY_PATH? Why was it needed, and what does it tell us about the dynamic loader?
+`LD_LIBRARY_PATH` is an environment variable with a list of extra folders where the
+dynamic loader searches for `.so` files, before the standard system folders.
+
+When `client_dynamic` starts, the dynamic loader (`ld-linux-x86-64.so.2`) must find
+`libmyutils.so` and load it into memory. By default it only searches system folders
+like `/lib` and `/usr/lib`, so it failed with "cannot open shared object file".
+Setting `export LD_LIBRARY_PATH=$PWD/lib` told it to also search our `lib/` folder.
+
+This shows that the dynamic loader is responsible, at run time, for finding every
+required shared library, loading it into memory, and connecting (resolving) the
+program's function calls to it. `ldd` shows the result of this search.
